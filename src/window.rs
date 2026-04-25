@@ -809,6 +809,18 @@ impl Window {
     }
 
     fn connect_signals(&self) {
+        self.imp().song_cover.click_gesture().connect_pressed(clone!(@weak self as win => move |_, n_press, _, _| {
+            if n_press == 1 {
+                win.imp().cover_lyrics_stack.set_visible_child_name("lyrics-view");
+            }
+        }));
+
+        self.imp().lyrics_view.click_gesture().connect_pressed(clone!(@weak self as win => move |_, n_press, _, _| {
+            if n_press == 1 {
+                win.imp().cover_lyrics_stack.set_visible_child_name("cover-view");
+            }
+        }));
+
         self.imp().split_view.connect_notify_local(
             Some("collapsed"),
             clone!(@weak self as win => move |split_view, _| {
@@ -1179,9 +1191,12 @@ impl Window {
 
                 let position = state.position() as f64 / state.duration() as f64;
                 self.set_song_position(position);
+                
+                self.imp().lyrics_view.set_position(elapsed * 1000);
             } else {
                 self.set_song_time(None, None);
                 self.set_song_position(0.0);
+                self.imp().lyrics_view.set_position(0);
             }
         }
     }
@@ -1193,6 +1208,26 @@ impl Window {
             self.update_playlist_time();
             self.update_title(state.current_song().as_ref());
             self.update_style(state.current_song().as_ref());
+            
+            if let Some(song) = state.current_song() {
+                let path = song.file().path().unwrap_or_default();
+                let lrc_path = find_lrc_for_song(&path);
+                if let Some(p) = lrc_path {
+                    if let Some(lines) = parse_lrc_file(&p) {
+                        self.imp().lyrics_view.set_lyrics(Some(lines));
+                        self.imp().song_cover.set_has_lyrics(true);
+                    } else {
+                        self.imp().lyrics_view.set_lyrics(None);
+                        self.imp().song_cover.set_has_lyrics(false);
+                    }
+                } else {
+                    self.imp().lyrics_view.set_lyrics(None);
+                    self.imp().song_cover.set_has_lyrics(false);
+                }
+            } else {
+                self.imp().lyrics_view.set_lyrics(None);
+                self.imp().song_cover.set_has_lyrics(false);
+            }
         }
     }
 

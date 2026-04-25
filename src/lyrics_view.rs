@@ -130,14 +130,13 @@ impl LyricsView {
                         if i == active_idx {
                             label.remove_css_class("dim-label");
                             // Auto scroll
-                            if let Ok(bounds) = row_widget.compute_bounds(&imp.lyrics_list.get()) {
-                                if let Some(adj) = imp.scrolled_window.vadjustment() {
-                                    let page_size = adj.page_size();
-                                    let new_value = bounds.y() as f64 - (page_size / 2.0) + (bounds.height() as f64 / 2.0);
-                                    let max_value = adj.upper() - page_size;
-                                    let clamped_value = new_value.clamp(0.0, max_value);
-                                    adj.set_value(clamped_value);
-                                }
+                            if let Some(bounds) = row_widget.compute_bounds(&imp.lyrics_list.get()) {
+                                let adj = imp.scrolled_window.vadjustment();
+                                let page_size = adj.page_size();
+                                let new_value = bounds.y() as f64 - (page_size / 2.0) + (bounds.height() as f64 / 2.0);
+                                let max_value = adj.upper() - page_size;
+                                let clamped_value = new_value.clamp(0.0, max_value);
+                                adj.set_value(clamped_value);
                             }
                         } else {
                             label.add_css_class("dim-label");
