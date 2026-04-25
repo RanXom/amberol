@@ -30,10 +30,42 @@
               <object class="GtkStackPage">
                 <property name="name">cover-image</property>
                 <property name="child">
-                  <object class="AmberolCoverPicture" id="album_image">
-                    <style>
-                      <class name="icon-dropshadow"/>
-                    </style>
+                  <object class="GtkOverlay" id="cover_overlay">
+                    <property name="child">
+                      <object class="AmberolCoverPicture" id="album_image">
+                        <style>
+                          <class name="icon-dropshadow"/>
+                        </style>
+                      </object>
+                    </property>
+                    <child type="overlay">
+                      <object class="GtkRevealer" id="lyrics_revealer">
+                        <property name="transition-type">crossfade</property>
+                        <property name="halign">fill</property>
+                        <property name="valign">fill</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Display Lyrics</property>
+                                <style>
+                                  <class name="title-2"/>
+                                  <class name="osd"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEventControllerMotion" id="motion_controller"/>
+                    </child>
+                    <child>
+                      <object class="GtkGestureClick" id="click_gesture"/>
+                    </child>
                   </object>
                 </property>
               </object>

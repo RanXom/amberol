@@ -9,6 +9,8 @@ mod drag_overlay;
 mod i18n;
 mod playback_control;
 mod playlist_view;
+mod lyrics;
+mod lyrics_view;
 mod queue_row;
 mod search;
 mod song_cover;

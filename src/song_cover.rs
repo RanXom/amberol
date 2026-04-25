@@ -17,6 +17,13 @@ mod imp {
         pub cover_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub album_image: TemplateChild<CoverPicture>,
+        #[template_child]
+        pub lyrics_revealer: TemplateChild<gtk::Revealer>,
+        #[template_child]
+        pub motion_controller: TemplateChild<gtk::EventControllerMotion>,
+        #[template_child]
+        pub click_gesture: TemplateChild<gtk::GestureClick>,
+        pub has_lyrics: std::cell::Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -40,6 +47,22 @@ mod imp {
     }
 
     impl ObjectImpl for SongCover {
+        fn constructed(&self) {
+            self.parent_constructed();
+            
+            self.motion_controller.get().connect_enter(glib::clone!(@weak self as imp => move |_, _, _| {
+                if imp.has_lyrics.get() {
+                    imp.lyrics_revealer.get().set_reveal_child(true);
+                    imp.album_image.get().add_css_class("dim-label");
+                }
+            }));
+            
+            self.motion_controller.get().connect_leave(glib::clone!(@weak self as imp => move |_| {
+                imp.lyrics_revealer.get().set_reveal_child(false);
+                imp.album_image.get().remove_css_class("dim-label");
+            }));
+        }
+
         fn dispose(&self) {
             while let Some(child) = self.obj().first_child() {
                 child.unparent();
@@ -77,5 +100,17 @@ impl SongCover {
         } else {
             cover_stack.set_visible_child_name("no-image");
         }
+    }
+
+    pub fn set_has_lyrics(&self, has_lyrics: bool) {
+        self.imp().has_lyrics.set(has_lyrics);
+        if !has_lyrics {
+            self.imp().lyrics_revealer.get().set_reveal_child(false);
+            self.imp().album_image.get().remove_css_class("dim-label");
+        }
+    }
+
+    pub fn click_gesture(&self) -> gtk::GestureClick {
+        self.imp().click_gesture.get()
     }
 }

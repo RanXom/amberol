@@ -33,5 +33,8 @@
         </child>
       </object>
     </child>
+    <child>
+      <object class="GtkGestureClick" id="click_gesture"/>
+    </child>
   </template>
 </interface>

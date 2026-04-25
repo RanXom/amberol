@@ -27,6 +27,9 @@ use crate::{
     utils,
     volume_control::VolumeControl,
     waveform_view::WaveformView,
+    lyrics_view::LyricsView,
+    lyrics::find_lrc_for_song,
+    lyrics::parse_lrc_file,
 };
 
 pub enum WindowMode {
@@ -56,6 +59,10 @@ mod imp {
         pub song_cover: TemplateChild<SongCover>,
         #[template_child]
         pub song_details: TemplateChild<SongDetails>,
+        #[template_child]
+        pub cover_lyrics_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub lyrics_view: TemplateChild<LyricsView>,
         #[template_child]
         pub waveform_view: TemplateChild<WaveformView>,
         #[template_child]
@@ -186,6 +193,8 @@ mod imp {
             Self {
                 song_details: TemplateChild::default(),
                 song_cover: TemplateChild::default(),
+                cover_lyrics_stack: TemplateChild::default(),
+                lyrics_view: TemplateChild::default(),
                 split_view: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
                 drag_overlay: TemplateChild::default(),
