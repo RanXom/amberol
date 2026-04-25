@@ -810,7 +810,7 @@ impl Window {
 
     fn connect_signals(&self) {
         self.imp().song_cover.click_gesture().connect_pressed(clone!(@weak self as win => move |_, n_press, _, _| {
-            if n_press == 1 {
+            if n_press == 1 && win.imp().song_cover.has_lyrics() {
                 win.imp().cover_lyrics_stack.set_visible_child_name("lyrics-view");
             }
         }));

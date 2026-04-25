@@ -136,24 +136,22 @@ impl Controller for MprisController {
         self.update_metadata();
     }
 
-    fn set_position(&self, position: u64, notify: bool) {
+    fn set_position(&self, position: u64) {
         let pos = Time::from_secs(position as i64);
         if let Some(mpris) = self.mpris.get() {
             mpris.set_position(pos);
         }
-        if notify {
-            glib::spawn_future_local(clone!(
-                #[weak(rename_to = mpris)]
-                self.mpris,
-                async move {
-                    if let Some(mpris) = mpris.get() {
-                        if let Err(err) = mpris.seeked(pos).await {
-                            error!("Unable to emit MPRIS Seeked: {err:?}");
-                        }
+        glib::spawn_future_local(clone!(
+            #[weak(rename_to = mpris)]
+            self.mpris,
+            async move {
+                if let Some(mpris) = mpris.get() {
+                    if let Err(err) = mpris.seeked(pos).await {
+                        error!("Unable to emit MPRIS Seeked: {err:?}");
                     }
                 }
-            ));
-        }
+            }
+        ));
     }
 
     fn set_repeat_mode(&self, repeat: RepeatMode) {
@@ -283,7 +281,7 @@ fn setup_signals(sender: Sender<PlaybackAction>, mpris: &Player) {
         sender,
         move |_, offset| {
             let offset = offset.as_secs();
-            if let Err(e) = sender.send_blocking(PlaybackAction::Seek(offset)) {
+            if let Err(e) = sender.send_blocking(PlaybackAction::Seek(offset as u64)) {
                 error!("Unable to send Seek({offset}): {e}");
             }
         }

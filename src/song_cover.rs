@@ -110,6 +110,10 @@ impl SongCover {
         }
     }
 
+    pub fn has_lyrics(&self) -> bool {
+        self.imp().has_lyrics.get()
+    }
+
     pub fn click_gesture(&self) -> gtk::GestureClick {
         self.imp().click_gesture.get()
     }

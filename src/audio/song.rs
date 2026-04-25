@@ -10,7 +10,7 @@ use std::{
 
 use glib::{ParamSpec, ParamSpecBoolean, ParamSpecObject, ParamSpecString, ParamSpecUInt, Value};
 use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*};
-use lofty::{Accessor, TaggedFileExt};
+use lofty::prelude::{Accessor, TaggedFileExt};
 use log::{debug, warn};
 use once_cell::sync::Lazy;
 use sha2::{Digest, Sha256};
@@ -104,9 +104,9 @@ impl SongData {
         let mut cover_uuid = None;
         if let Some(tag) = tagged_file.primary_tag() {
             debug!("Found primary tag");
-            artist = tag.artist().map(|s| s.to_string());
-            title = tag.title().map(|s| s.to_string());
-            album = tag.album().map(|s| s.to_string());
+            artist = tag.artist().as_deref().map(|s| s.to_string());
+            title = tag.title().as_deref().map(|s| s.to_string());
+            album = tag.album().as_deref().map(|s| s.to_string());
             if let Some(res) = cover_cache.cover_art(&path, tag) {
                 cover_art = Some(res.0);
                 cover_uuid = Some(res.1);
@@ -115,9 +115,9 @@ impl SongData {
             warn!("Unable to load primary tag for: {}", uri);
             for tag in tagged_file.tags() {
                 debug!("Found tag: {:?}", tag.tag_type());
-                artist = tag.artist().map(|s| s.to_string());
-                title = tag.title().map(|s| s.to_string());
-                album = tag.album().map(|s| s.to_string());
+                artist = tag.artist().as_deref().map(|s| s.to_string());
+                title = tag.title().as_deref().map(|s| s.to_string());
+                album = tag.album().as_deref().map(|s| s.to_string());
                 if let Some(res) = cover_cache.cover_art(&path, tag) {
                     cover_art = Some(res.0);
                     cover_uuid = Some(res.1);
@@ -154,7 +154,7 @@ impl SongData {
             _ => None,
         };
 
-        let properties = lofty::AudioFile::properties(&tagged_file);
+        let properties = lofty::prelude::AudioFile::properties(&tagged_file);
         let duration = properties.duration().as_secs();
 
         debug!(

@@ -24,6 +24,7 @@ pub enum ApplicationAction {
 }
 
 mod imp {
+    use gio::ApplicationHoldGuard;
     use super::*;
 
     #[derive(Debug)]

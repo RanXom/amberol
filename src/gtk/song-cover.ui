@@ -3,6 +3,12 @@
   <requires lib="gtk" version="4.0"/>
   <template class="AmberolSongCover" parent="GtkWidget">
     <child>
+      <object class="GtkEventControllerMotion" id="motion_controller"/>
+    </child>
+    <child>
+      <object class="GtkGestureClick" id="click_gesture"/>
+    </child>
+    <child>
       <object class="GtkBox">
         <property name="halign">center</property>
         <property name="valign">center</property>
@@ -59,12 +65,6 @@
                           </object>
                         </property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkEventControllerMotion" id="motion_controller"/>
-                    </child>
-                    <child>
-                      <object class="GtkGestureClick" id="click_gesture"/>
                     </child>
                   </object>
                 </property>
